@@ -1,5 +1,11 @@
 # split-pdf-pages-to-png-images
 
+**pdf-to-png-pages:** automates the splitting and conversion to png.
+
+```
+pdf-to-png-pages pdf-file [dest]
+```
+
 Use pdftk to split the pdf docs into pages then use sips to convert the pdf pages into png images. Use convert to compare images to see if they are 'the same'.
 
 **use pdftk to split docs into indivual pages**

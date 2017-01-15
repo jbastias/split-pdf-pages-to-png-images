@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+usage() {
+  echo "usage: `basename \"$0\"` <pdf-file> [<dir>]";
+}
+
+if [ "$#" -lt "1" ]; then
+  echo "you must provide pdf-file.";
+  usage;
+  exit 1;
+fi
+
+pdf=$1
+
+if [ ! -e $pdf ]; then
+  echo "$pdf does not exist."
+  exit 1;
+fi
+
+if [ "`file $pdf | grep "PDF document"`" == "" ]; then
+  echo "$pdf must be a pdf file"
+  exit 1;
+fi
+
+dir=$2
+if [ "$dir" != "" ] && [ ! -e "$dir" ]; then
+  echo "$dir does not exist"
+  exit 1;
+fi
+
+# split into pages
+pdftk $pdf burst
+
+# convert to png
+for _pdf in `ls pg_????.pdf`; do
+  png=`echo $_pdf | sed "s/pdf/png/"`;
+  sips -s format png $_pdf --out $png >/dev/null;
+done
+
+# move to dir/
+if [ "$dir" != "" ]; then
+  mv ./pg_*.png $dir/
+fi
+
+# clean up
+rm doc_data.txt
+rm pg_*.pdf
