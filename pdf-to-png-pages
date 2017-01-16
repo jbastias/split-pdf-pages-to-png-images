@@ -12,6 +12,16 @@ fi
 
 pdf=$1
 
+
+name=`basename $pdf`
+
+echo $name
+
+prefix=""
+if [ "`echo $name | grep \"^test-\"`" != "" ]; then
+  prefix="test-"
+fi
+
 if [ ! -e $pdf ]; then
   echo "$pdf does not exist."
   exit 1;
@@ -37,9 +47,15 @@ for _pdf in `ls pg_????.pdf`; do
   sips -s format png $_pdf --out $png >/dev/null;
 done
 
+if [ "$prefix" != "" ]; then
+  for file in `ls pg_*.png`; do
+    mv $file "$prefix$file"
+  done
+fi
+
 # move to dir/
 if [ "$dir" != "" ]; then
-  mv ./pg_*.png $dir/
+  mv ./*.png $dir/
 fi
 
 # clean up
