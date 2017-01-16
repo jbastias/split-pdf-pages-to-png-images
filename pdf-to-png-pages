@@ -12,10 +12,7 @@ fi
 
 pdf=$1
 
-
 name=`basename $pdf`
-
-echo $name
 
 prefix=""
 if [ "`echo $name | grep \"^test-\"`" != "" ]; then
@@ -38,6 +35,11 @@ if [ "$dir" != "" ] && [ ! -e "$dir" ]; then
   exit 1;
 fi
 
+CWD=`pwd`
+TMP=`mktemp -d`
+
+cd $TMP
+
 # split into pages
 pdftk $pdf burst
 
@@ -56,8 +58,12 @@ fi
 # move to dir/
 if [ "$dir" != "" ]; then
   mv ./*.png $dir/
+else
+  mv ./*.png $CWD/ 2>&1>/dev/null
 fi
 
 # clean up
 rm doc_data.txt
 rm pg_*.pdf
+
+cd $CWD
